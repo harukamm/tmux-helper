@@ -66,3 +66,8 @@ def tmux_cmd(cmd, sep='|'):
 
 def harukam_env():
   return os.environ['HARUKAM_ENV'] if 'HARUKAM_ENV' in os.environ else None
+
+def exit0_ifnot(condition, msg="assertion failed"):
+  if not condition:
+    print(msg)
+    exit(0)

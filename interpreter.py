@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import util
+import util, sys
 
 def layout():
   # The following command does not work well
@@ -23,18 +23,23 @@ def layout():
     }
   }
 
-  assert env
-  assert env in m
-  assert count in m[env]
+  util.exit0_ifnot(env, "no env")
+  util.exit0_ifnot(env in m, "unknown env: " + env)
+  util.exit0_ifnot(count in m[env], "not supported count: " + str(count))
 
   layout = m[env][count]
-  util.run_cmd(['tmux', 'select-layout', layout])
+  exitcode, _ = util.run_cmd(['tmux', 'select-layout', layout])
+
+  util.exit0_ifnot(exitcode == 0, "select-layout failed")
 
 def run(cmd):
-  assert 0 < len(cmd)
+  util.exit0_ifnot(0 < len(cmd))
   first = cmd[0]
 
-  if first == "layout":
-    layout()
-  else:
-    raise Exception("not found command: " + first)
+  try:
+    if first == "layout":
+      layout()
+    else:
+      raise Exception("not found command: " + first)
+  except Exception as e:
+    util.exit0_ifnot(False, "exception: " + str(e))
