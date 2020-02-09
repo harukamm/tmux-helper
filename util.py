@@ -30,31 +30,31 @@ def parse_variables(out, variable_names, sep):
   res = out.split(sep)
   assert len(res) == len(variable_names)
   assert any(0 < len(v) for v in res)
-  values = list(map(parse_value, res))
 
   m = {}
   for i in range(len(variable_names)):
     name = variable_names[i]
-    value = values[i]
+    value = parse_value(res[i])
     m[name] = value
+
   return m
 
 def display(variables, sep='|'): 
   form = to_format(variables, sep)
 
   code, out = run_cmd(['tmux', 'display', '-p', form])
-  return parse_variables(out, variables, sep).values()
+  return list(parse_variables(out, variables, sep).values())
 
 def tmux_cmd(cmd, sep='|'):
   variables = None
   form = ''
-  for i in range(len(cmd) - 1):
-    if cmd[i] != '-F':
-      continue
-    if isinstance(cmd[i + 1], list):
-      variables = cmd[i + 1]
-      form = to_format(variables, sep)
-      cmd[i + 1] = form
+  i = '-F' in cmd and cmd.index('-F')
+
+  if i + 1 < len(cmd) and \
+      isinstance(cmd[i + 1], list):
+    variables = cmd[i + 1]
+    form = to_format(variables, sep)
+    cmd[i + 1] = form
 
   code, out = run_cmd(['tmux'] + cmd)
   if variables is None:
