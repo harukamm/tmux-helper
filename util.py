@@ -3,6 +3,7 @@
 
 import subprocess
 import shlex, sys, re
+import os
 
 def run_cmd(cmd):
   # args = shlex.split(cmd)
@@ -62,3 +63,6 @@ def tmux_cmd(cmd, sep='|'):
 
   lines = out.split()
   return list(map(lambda line: parse_variables(line, variables, sep), lines))
+
+def harukam_env():
+  return os.environ['HARUKAM_ENV'] if 'HARUKAM_ENV' in os.environ else None
