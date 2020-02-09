@@ -44,7 +44,8 @@ def display(variables, sep='|'):
   form = to_format(variables, sep)
 
   code, out = run_cmd(['tmux', 'display', '-p', form])
-  return list(parse_variables(out, variables, sep).values())
+  var_dict = parse_variables(out, variables, sep)
+  return [var_dict[v] for v in variables]
 
 def tmux_cmd(cmd, sep='|'):
   variables = None
